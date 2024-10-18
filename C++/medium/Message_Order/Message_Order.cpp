@@ -5,19 +5,42 @@
 using namespace std;
 
 class Message {
-public: 
-    Message() {}
-    const string& get_text() {
-        
-    }
+    public: 
+        Message() {}
+        Message(const std::string &str, int id_): text(str), id(id_){} ;
+
+        const   string& get_text() const {
+            return text;
+        }
+
+        const   int& get_id() const {
+            return this->id;
+        }
+        bool operator<(const Message &a) const {
+            return this->get_id() < a.get_id();
+        }
+    private:
+        std::string text;
+        int id;
 };
 
 class MessageFactory {
 public:
     MessageFactory() {}
-    Message create_message(const string& text) {
-        
+    Message create_message(const std::string& text) {
+        set_id(this->id + 1);
+        return Message(text, get_id());
     }
+    private:
+
+    void set_id(const int& _id) {
+        this->id = _id;
+    }
+
+    const int& get_id() const{
+        return this->id;
+    }
+    int id;
 };
 
 class Recipient {
