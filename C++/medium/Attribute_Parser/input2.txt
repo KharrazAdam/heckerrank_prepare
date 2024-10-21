@@ -1,0 +1,11 @@
+6 4
+<tag1 value = "value-of-tag1-in-txt2">
+<tag2 name = "name-of-tag2-in-txt2">
+<tag3 another="another" final="final">
+</tag3>
+</tag2>
+</tag1>
+tag1~value
+tag1.tag2.tag3~name
+tag.tag2~value
+tag1.tag2.tag3~final
