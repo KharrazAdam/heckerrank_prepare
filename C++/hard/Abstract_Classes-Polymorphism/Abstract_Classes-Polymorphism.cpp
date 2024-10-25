@@ -69,10 +69,21 @@ class LRUCache : public Cache
             return tmp;
         };
 
-        // void    add_node() {};
-        // void    rm_node() {};
-        // void    set_head() {};
-        // void    set_tail() {};
+        void    add_node(int k, int val) {
+            Node *node = new Node(NULL, this->head, k, val);
+            this->head->prev = node;
+            this->head = node;
+            mp[k] = node;
+        };
+
+        void    rm_node() {
+            Node* tmp = this->head;
+            mp.erase(tail->key);
+            tmp = tail;
+            tail = tail->prev;
+            tail->next = NULL;
+            delete tmp;
+        };
 
         void    set(int k, int val) {
             if (mp.empty()) {
@@ -81,27 +92,43 @@ class LRUCache : public Cache
                 head = tail = node;
             }
             else {
-                if (mp.find(k) != mp.end()) {
-                    ;
+            if (mp.find(k) != mp.end()) { 
+                Node* node = mp[k];
+                
+                if (head == node) {
+                    node->value = val;
+                    return;
                 }
-                else if (get_isfull() == false) {
-                    Node *node = new Node(NULL, this->head, k, val);
-                    this->head->prev = node;
-                    this->head = node;
-                    mp[k] = node;
+                
+                node->value = val;
+                
+                if (node->prev) {
+                    node->prev->next = node->next;
                 }
+                if (node->next) {
+                    node->next->prev = node->prev;
+                }
+                
+                if (node == tail) {
+                    tail = node->prev;
+                }
+                
+                node->next = head;
+                node->prev = nullptr;
+                if (head) {
+                    head->prev = node;
+                }
+                head = node;
+                
+                mp[k] = head;
+            }
                 else {
-                    Node* tmp = this->head;
-                    Node *node = new Node(NULL, this->head, k, val);
-                    this->head->prev = node;
-                    this->head = node;
-                    mp[k] = node;
-
-                    mp.erase(tail->key);
-                    tmp = tail;
-                    tail = tail->prev;
-                    tail->next = NULL;
-                    delete tmp;
+                    if (get_isfull() == false)
+                        this->add_node(k, val);
+                    else {
+                        this->add_node(k, val);
+                        this->rm_node();
+                    }
                 }
             }
             if (this->cp == mp.size())
