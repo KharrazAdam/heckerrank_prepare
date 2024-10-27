@@ -1,0 +1,67 @@
+body {
+  font-family: "Georgia", serif;
+  color: #333;
+  background-color: #f5f0e6;
+  height: 100vh;
+  margin: 0;
+}
+
+.notebook {
+  border: 10px solid #8c2a2a; /* Light red border for the notebook */
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  position: relative; /* Keep the notebook in place */
+  width: 80%; /* Responsive width */
+  margin: 20px auto; /* Center the notebook */
+}
+
+.date {
+  font-weight: bold; /* Bold date for emphasis */
+  margin-bottom: 10px; /* Space below the date */
+}
+
+.string-display {
+  text-align: center; /* Center the strings */
+  margin: 20px 0; /* Space above and below the strings */
+}
+
+.display-string {
+  display: flex;
+  justify-content: center; /* Center the items horizontally */
+  align-items: center; /* Center the items vertically */
+  gap: 4em; /* Space between the two strings */
+  margin: 10px 0; /* Spacing above and below the strings */
+}
+
+table {
+  border-collapse: collapse; /* Merge table borders */
+  width: 100%; /* Full width of the container */
+}
+
+td {
+  border: 1px solid #d93e2e; /* Border for each cell */
+  padding: 8px; /* Cell padding */
+  text-align: center; /* Center text in cells */
+  background-color: #eaeaea; /* Light background for table cells */
+}
+
+.horizontal-line {
+  border-top: 1px solid #d93e2e; /* Top horizontal line */
+  margin: 10px 0; /* Margin around the line */
+}
+
+.footer {
+  text-align: center; /* Center the footer text */
+  margin-top: 20px; /* Space above the footer */
+  font-size: 14px; /* Smaller font size */
+}
+
+.bookmark {
+  position: absolute;
+  top: 20px; /* Positioning for bookmark */
+  right: 20px; /* Positioning for bookmark */
+  width: 5px;
+  height: 20px;
+  background-color: #d93e2e; /* Bookmark color */
+}

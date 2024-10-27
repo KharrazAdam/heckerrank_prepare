@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LCS Visualizer</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="index.js" defer></script>
+  </head>
+  <body>
+    <div class="notebook">
+      <h1>Longest Common Subsequence (LCS)</h1>
+      <h2>Dynamic Programming Solution Visualizer:</h2>
+      <div class="horizontal-line"></div>
+      <div id="date" class="date"></div>
+      <!-- Place for today's date -->
+      <div>
+        First string: <input type="text" id="first_string" /> Second string:
+        <input type="text" id="second_string" />
+        <button onclick="start()">Start</button>
+        <button onclick="updateTable()">Update Table</button>
+      </div>
+      <div id="stringDisplay" class="string-display">
+        <!-- Display strings will be inserted here -->
+      </div>
+      <div id="scene">
+        <!-- Table will be generated here -->
+      </div>
+      <div class="bookmark"></div>
+    </div>
+    <div class="footer">
+      &copy; 2024 Kharraz Adam. All rights reserved - please don't steal me -
+    </div>
+  </body>
+</html>
