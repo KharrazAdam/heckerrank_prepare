@@ -123,15 +123,12 @@ class LRUCache : public Cache
                 mp[k] = head;
             }
                 else {
-                    if (get_isfull() == false)
-                        this->add_node(k, val);
-                    else {
-                        this->add_node(k, val);
+                    this->add_node(k, val);
+                    if (get_isfull() == true)
                         this->rm_node();
-                    }
                 }
             }
-            if (this->cp == mp.size())
+            if (!get_isfull() && this->cp == mp.size())
                 set_isfull(true);
         };
 };

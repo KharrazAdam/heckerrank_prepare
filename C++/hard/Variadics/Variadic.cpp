@@ -15,7 +15,7 @@ int reversed_binary_value() {
 template <bool First, bool Next, bool... Rest>
 int reversed_binary_value() {
     int current_value = First ? 1 : 0;
-    return current_value + (reversed_binary_value<Next, Rest...>() << 1); // Recursive call
+    return current_value | (reversed_binary_value<Next, Rest...>() << 1);
 };
 
 template <int n, bool...digits>
