@@ -4,64 +4,104 @@ body {
   background-color: #f5f0e6;
   height: 100vh;
   margin: 0;
+  display: flex;
+  align-items: flex-start; /* Align items to the start of the y-axis */
+  justify-content: center; /* Center items on the x-axis */
 }
 
 .notebook {
-  border: 10px solid #8c2a2a; /* Light red border for the notebook */
+  width: 80%;
+  background-color: #fff3e0; /* Light notebook page color */
+  border: 1px solid #b22222; /* Darker border for the notebook */
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  position: relative; /* Keep the notebook in place */
-  width: 80%; /* Responsive width */
-  margin: 20px auto; /* Center the notebook */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .date {
-  font-weight: bold; /* Bold date for emphasis */
-  margin-bottom: 10px; /* Space below the date */
-}
-
-.string-display {
-  text-align: center; /* Center the strings */
-  margin: 20px 0; /* Space above and below the strings */
+  font-weight: bold;
+  text-align: right;
+  margin-bottom: 10px;
 }
 
 .display-string {
   display: flex;
-  justify-content: center; /* Center the items horizontally */
-  align-items: center; /* Center the items vertically */
-  gap: 4em; /* Space between the two strings */
-  margin: 10px 0; /* Spacing above and below the strings */
+  justify-content: space-between; /* Space between the strings */
+  margin: 10px 0; /* Spacing between the two strings */
+}
+
+#scene {
+  margin-top: 20px;
+  width: 100%;
 }
 
 table {
-  border-collapse: collapse; /* Merge table borders */
-  width: 100%; /* Full width of the container */
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px; /* Add some spacing above the table */
+}
+
+th,
+td {
+  border: 1px solid #b22222; /* Darker border for the table */
+  padding: 10px;
+  text-align: center;
+  background-color: #fafafa; /* Soft background for the table */
+}
+
+th {
+  background-color: #d42c2c; /* Header background */
+  color: #fff; /* White text for contrast */
 }
 
 td {
-  border: 1px solid #d93e2e; /* Border for each cell */
-  padding: 8px; /* Cell padding */
-  text-align: center; /* Center text in cells */
-  background-color: #eaeaea; /* Light background for table cells */
+  color: #333;
 }
 
-.horizontal-line {
-  border-top: 1px solid #d93e2e; /* Top horizontal line */
-  margin: 10px 0; /* Margin around the line */
+footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9em;
 }
 
-.footer {
-  text-align: center; /* Center the footer text */
-  margin-top: 20px; /* Space above the footer */
-  font-size: 14px; /* Smaller font size */
+footer img {
+  width: 20px; /* Pencil icon size */
+  vertical-align: middle; /* Align icon with text */
+  margin-left: 5px; /* Spacing between text and icon */
 }
 
-.bookmark {
-  position: absolute;
-  top: 20px; /* Positioning for bookmark */
-  right: 20px; /* Positioning for bookmark */
-  width: 5px;
-  height: 20px;
-  background-color: #d93e2e; /* Bookmark color */
+/* Textbook lines */
+.notebook::before {
+  content: "";
+  display: block;
+  height: 1px;
+  background-color: #d3d3d3; /* Light gray lines */
+  margin: 10px 0;
+}
+
+#button-container {
+  display: flex; /* Use flexbox for alignment */
+  justify-content: center; /* Center the buttons */
+  margin-top: 15px; /* Spacing above the buttons */
+}
+
+#left-arrow-button,
+#right-arrow-button {
+  background-color: #ff4c4c; /* Softer red background */
+  color: #fff; /* White text for contrast */
+  border: none; /* Remove default border */
+  border-radius: 50%; /* Circular buttons */
+  padding: 15px; /* Padding for better touch target */
+  font-size: 24px; /* Larger font size for arrows */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  margin: 0 10px; /* Margin for spacing between buttons */
+  transition: background-color 0.3s ease, transform 0.2s; /* Smooth transitions */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+#left-arrow-button:hover,
+#right-arrow-button:hover {
+  background-color: #e63939; /* Darker red on hover */
+  transform: scale(1.1); /* Slightly enlarge on hover */
 }

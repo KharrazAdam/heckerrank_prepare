@@ -1,64 +1,102 @@
-// Function to set today's date
-function setTodayDate() {
-  const dateElement = document.getElementById("date");
-  const today = new Date();
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  dateElement.innerHTML = today.toLocaleDateString("en-US", options); // Format the date
+// Get the input values
+const firstString = document.getElementById("first_string").value;
+const secondString = document.getElementById("second_string").value;
+
+const m = firstString.length;
+const n = secondString.length;
+let isStarted = false;
+let ix = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0)); // Initialize ix for LCS
+
+function updateStrings(text) {
+  const span = document.createElement("span");
+  span.style.fontWeight = "bold";
+  span.style.fontSize = "20px";
+  span.innerText = text;
+  return span;
 }
 
-// Call setTodayDate on page load
-window.onload = function () {
-  setTodayDate();
-};
-
-// Start function to create the table
 function start() {
-  // Get the input values
-  const firstString = document.getElementById("first_string").value;
-  const secondString = document.getElementById("second_string").value;
+  // Display current date
+  if (isStarted) return;
+  document.getElementById("current-date").innerText =
+    new Date().toLocaleDateString();
 
-  // Display the strings above the table
-  const stringDisplay = document.getElementById("stringDisplay");
-  stringDisplay.innerHTML = `<div class="display-string"><strong> ${firstString}</strong>
-                             <div"><strong>${secondString}</strong> </div>`;
+  document
+    .querySelector("#first-string-display")
+    .appendChild(updateStrings(firstString));
+  document
+    .querySelector("#second-string-display")
+    .appendChild(updateStrings(secondString));
 
-  // Calculate lengths
-  const firstStringLength = firstString.length;
-  const secondStringLength = secondString.length;
+  // Calculate the LCS and update the ix array
 
-  // Create the table HTML
-  let tableHTML = "<table>";
-
-  // Populate the table
-  for (let i = 0; i <= firstStringLength; i++) {
-    tableHTML += "<tr>";
-    for (let j = 0; j <= secondStringLength; j++) {
-      // Fill the cell with 0 for all positions
-      tableHTML += `<td>0</td>`;
-    }
-    tableHTML += "</tr>";
-  }
-  tableHTML += "</table>";
-
-  // Insert the table HTML into the scene
-  const sceneDiv = document.getElementById("scene");
-  sceneDiv.innerHTML = ""; // Clear previous content
-  sceneDiv.innerHTML = tableHTML; // Insert the new table
-
-  // Style the scene to ensure it appears properly
-  sceneDiv.style.position = "relative"; // Ensure it stays in place
-  sceneDiv.style.marginTop = "20px"; // Margin above the table
-  sceneDiv.style.padding = "10px"; // Padding around the table
-  sceneDiv.style.border = "2px solid #d93e2e"; // Red border for the notebook theme
-  sceneDiv.style.borderRadius = "10px"; // Rounded corners
+  // Update the table to reflect the current LCS results
+  updateTable();
+  isStarted = true;
 }
 
 function updateTable() {
-  const sceneDiv = document.getElementById("scene");
-  const cells = sceneDiv.getElementsByTagName("td");
-
-  // Update each cell value (for example, incrementing the value by 1)
-  for (let cell of cells) {
-    cell.innerText = parseInt(cell.innerText) + 1; // Increment each cell's value
+  const existingTable = document.querySelector("#scene table");
+  if (existingTable) {
+    existingTable.remove();
   }
+
+  const table = document.createElement("table");
+
+  for (let i = 0; i <= m; i++) {
+    const row = document.createElement("tr");
+
+    for (let j = 0; j <= n; j++) {
+      const cell = document.createElement("td");
+      cell.innerText = `${ix[i][j]}`; // Use the ix array to fill the table
+      row.appendChild(cell);
+    }
+
+    table.appendChild(row);
+  }
+
+  document.getElementById("scene").appendChild(table);
+}
+
+function calculateLCS(X, Y) {
+  const localIx = ix;
+  for (let i = 1; i <= X.length; i++) {
+    for (let j = 1; j <= Y.length; j++) {
+      if (X[i - 1] === Y[j - 1]) {
+        localIx[i][j] = localIx[i - 1][j - 1] + 1;
+      } else {
+        localIx[i][j] = Math.max(localIx[i - 1][j], localIx[i][j - 1]);
+      }
+    }
+  }
+
+  ix = localIx;
+}
+
+let f = 1;
+let g = 1;
+function moveRight() {
+  const localIx = ix;
+  if (firstString[f - 1] === secondString[g - 1]) {
+    localIx[f][g] = localIx[f - 1][g - 1] + 1;
+  } else {
+    localIx[f][g] = Math.max(localIx[f - 1][g], localIx[f][g - 1]);
+  }
+  g++;
+  if (g > n) {
+    g = 1;
+    f++;
+  }
+  updateTable(); // Ensure the table updates when moving
+}
+
+function moveLeft() {
+  const localIx = ix;
+
+  if (g == 1 && f > 1) {
+    g = n;
+    f--;
+  } else if (g > 1) g--;
+  localIx[f][g] = 0;
+  updateTable();
 }

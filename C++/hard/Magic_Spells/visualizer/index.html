@@ -8,27 +8,31 @@
   </head>
   <body>
     <div class="notebook">
-      <h1>Longest Common Subsequence (LCS)</h1>
-      <h2>Dynamic Programming Solution Visualizer:</h2>
-      <div class="horizontal-line"></div>
-      <div id="date" class="date"></div>
-      <!-- Place for today's date -->
+      <h1>Longest Common Subsequence (LCS) Visualizer</h1>
+      <div class="date" id="current-date"></div>
       <div>
         First string: <input type="text" id="first_string" /> Second string:
         <input type="text" id="second_string" />
         <button onclick="start()">Start</button>
-        <button onclick="updateTable()">Update Table</button>
       </div>
-      <div id="stringDisplay" class="string-display">
-        <!-- Display strings will be inserted here -->
+      <div class="display-string" id="display-strings">
+        <div id="first-string-display"></div>
+        <div id="second-string-display"></div>
       </div>
       <div id="scene">
-        <!-- Table will be generated here -->
+        <div id="table-container"></div>
+        <!-- Keep this line to contain the table -->
+        <div id="button-container">
+          <button id="left-arrow-button" onclick="moveLeft()">&#8592;</button>
+          <!-- Left arrow button -->
+          <button id="right-arrow-button" onclick="moveRight()">&#8594;</button>
+          <!-- Right arrow button -->
+        </div>
       </div>
-      <div class="bookmark"></div>
-    </div>
-    <div class="footer">
-      &copy; 2024 Kharraz Adam. All rights reserved - please don't steal me -
+      <footer>
+        &copy; 2024 LCS Visualizer
+        <img src="pencil-icon.png" alt="Pencil Icon" />
+      </footer>
     </div>
   </body>
 </html>
