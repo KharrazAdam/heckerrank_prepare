@@ -27,8 +27,12 @@ body {
 
 .display-string {
   display: flex;
-  justify-content: space-between; /* Space between the strings */
+  justify-content: center;
+  justify-items: center;
+  gap: 50px;
   margin: 10px 0; /* Spacing between the two strings */
+  font-size: 20px;
+  font-weight: bold;
 }
 
 #scene {
@@ -104,4 +108,10 @@ footer img {
 #right-arrow-button:hover {
   background-color: #e63939; /* Darker red on hover */
   transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+.updated-cell {
+  background-color: #ff4c4c; /* Red background for updated cell */
+  color: #fff; /* White text for contrast */
+  font-weight: bold; /* Emphasize the updated cell */
 }

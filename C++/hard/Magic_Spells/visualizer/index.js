@@ -1,102 +1,142 @@
-// Get the input values
-const firstString = document.getElementById("first_string").value;
-const secondString = document.getElementById("second_string").value;
+// Cache DOM elements
+const firstStringInput = document.getElementById("first_string");
+const secondStringInput = document.getElementById("second_string");
+const currentDateDisplay = document.getElementById("current-date");
+const firstStringDisplay = document.getElementById("first-string-display");
+const secondStringDisplay = document.getElementById("second-string-display");
+const explanationDiv = document.getElementById("explanation");
+const sceneContainer = document.getElementById("scene");
+const startButton = document.querySelector("button[onclick='start()']"); // Cache start button
 
-const m = firstString.length;
-const n = secondString.length;
 let isStarted = false;
-let ix = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0)); // Initialize ix for LCS
+let ix = [];
+let m, n, f, g;
+let lastUpdatedCell = { row: null, col: null };
 
-function updateStrings(text) {
+// Helper function to initialize LCS variables
+function initializeLCS() {
+  m = firstStringInput.value.length;
+  n = secondStringInput.value.length;
+  ix = Array(m + 1)
+    .fill()
+    .map(() => Array(n + 1).fill(0)); // Reset LCS matrix
+  f = 1;
+  g = 1;
+  lastUpdatedCell = { row: null, col: null };
+}
+
+function createStyledSpan(text, fontWeight = "bold", fontSize = "20px") {
   const span = document.createElement("span");
-  span.style.fontWeight = "bold";
-  span.style.fontSize = "20px";
+  span.style.fontWeight = fontWeight;
+  span.style.fontSize = fontSize;
   span.innerText = text;
   return span;
 }
 
 function start() {
-  // Display current date
-  if (isStarted) return;
-  document.getElementById("current-date").innerText =
-    new Date().toLocaleDateString();
+  if (!isStarted) {
+    // First time start
+    currentDateDisplay.innerText = new Date().toLocaleDateString();
+    startButton.innerText = "Restart"; // Change button to "Restart"
+    isStarted = true;
+  } else {
+    // Reset for restart
+    firstStringDisplay.innerHTML = "";
+    secondStringDisplay.innerHTML = "";
+    explanationDiv.innerHTML = "";
+    sceneContainer.querySelector("table")?.remove(); // Remove existing table
+  }
 
-  document
-    .querySelector("#first-string-display")
-    .appendChild(updateStrings(firstString));
-  document
-    .querySelector("#second-string-display")
-    .appendChild(updateStrings(secondString));
+  // Display the new input strings
+  firstStringDisplay.appendChild(createStyledSpan(firstStringInput.value));
+  secondStringDisplay.appendChild(createStyledSpan(secondStringInput.value));
 
-  // Calculate the LCS and update the ix array
-
-  // Update the table to reflect the current LCS results
+  // Initialize LCS variables and display the empty table
+  initializeLCS();
   updateTable();
-  isStarted = true;
 }
 
 function updateTable() {
-  const existingTable = document.querySelector("#scene table");
-  if (existingTable) {
-    existingTable.remove();
-  }
+  const existingTable = sceneContainer.querySelector("table");
+  if (existingTable) existingTable.remove();
 
   const table = document.createElement("table");
 
   for (let i = 0; i <= m; i++) {
     const row = document.createElement("tr");
-
     for (let j = 0; j <= n; j++) {
       const cell = document.createElement("td");
       cell.innerText = `${ix[i][j]}`; // Use the ix array to fill the table
+      if (i === lastUpdatedCell.row && j === lastUpdatedCell.col) {
+        cell.classList.add("updated-cell");
+      }
       row.appendChild(cell);
     }
-
     table.appendChild(row);
   }
-
-  document.getElementById("scene").appendChild(table);
+  sceneContainer.appendChild(table);
 }
 
-function calculateLCS(X, Y) {
-  const localIx = ix;
-  for (let i = 1; i <= X.length; i++) {
-    for (let j = 1; j <= Y.length; j++) {
-      if (X[i - 1] === Y[j - 1]) {
-        localIx[i][j] = localIx[i - 1][j - 1] + 1;
-      } else {
-        localIx[i][j] = Math.max(localIx[i - 1][j], localIx[i][j - 1]);
-      }
+function highlightCharacters() {
+  const highlightString = (displayElement, string, index, color) => {
+    displayElement.innerHTML = ""; // Clear previous highlights
+    for (let i = 0; i < string.length; i++) {
+      const charSpan = document.createElement("span");
+      charSpan.innerText = string[i];
+      if (i === index) charSpan.style.color = color; // Highlight current character
+      displayElement.appendChild(charSpan);
     }
-  }
+  };
 
-  ix = localIx;
+  highlightString(firstStringDisplay, firstStringInput.value, f - 1, "red");
+  highlightString(secondStringDisplay, secondStringInput.value, g - 1, "blue");
 }
 
-let f = 1;
-let g = 1;
 function moveRight() {
-  const localIx = ix;
-  if (firstString[f - 1] === secondString[g - 1]) {
-    localIx[f][g] = localIx[f - 1][g - 1] + 1;
+  if (firstStringInput.value[f - 1] === secondStringInput.value[g - 1]) {
+    ix[f][g] = ix[f - 1][g - 1] + 1;
   } else {
-    localIx[f][g] = Math.max(localIx[f - 1][g], localIx[f][g - 1]);
+    ix[f][g] = Math.max(ix[f - 1][g], ix[f][g - 1]);
   }
+
+  lastUpdatedCell = { row: f, col: g }; // Set last updated cell
+  updateExplanation();
+  highlightCharacters();
+
   g++;
   if (g > n) {
     g = 1;
     f++;
   }
-  updateTable(); // Ensure the table updates when moving
+  updateTable();
 }
 
 function moveLeft() {
-  const localIx = ix;
-
-  if (g == 1 && f > 1) {
+  if (g === 1 && f > 1) {
     g = n;
     f--;
-  } else if (g > 1) g--;
-  localIx[f][g] = 0;
+  } else if (g > 1) {
+    g--;
+  }
+  lastUpdatedCell = { row: f, col: g };
+  updateExplanation();
+  highlightCharacters();
   updateTable();
+}
+
+function updateExplanation() {
+  const charFromFirst = firstStringInput.value[f - 1] || "";
+  const charFromSecond = secondStringInput.value[g - 1] || "";
+  explanationDiv.innerHTML = ""; // Clear previous explanation
+
+  const explanationText = document.createElement("p");
+  explanationText.style.fontSize = "18px";
+  explanationText.style.color = "#333";
+
+  explanationText.innerHTML =
+    charFromFirst === charFromSecond
+      ? `Characters match: "<strong>${charFromFirst}</strong>" from <em>firstString</em> and "<strong>${charFromSecond}</strong>" from <em>secondString</em>. This increases LCS by 1. Current LCS value at (${f}, ${g}) is <strong>${ix[f][g]}</strong>.`
+      : `Characters do not match: "<strong>${charFromFirst}</strong>" from <em>firstString</em> and "<strong>${charFromSecond}</strong>" from <em>secondString</em>. The LCS value remains the maximum of the previous values, which is <strong>${ix[f][g]}</strong> at (${f}, ${g}).`;
+
+  explanationDiv.appendChild(explanationText);
 }
