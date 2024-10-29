@@ -1,12 +1,14 @@
 // Cache DOM elements
-const firstStringInput = document.getElementById("first_string");
-const secondStringInput = document.getElementById("second_string");
-const currentDateDisplay = document.getElementById("current-date");
-const firstStringDisplay = document.getElementById("first-string-display");
-const secondStringDisplay = document.getElementById("second-string-display");
-const explanationDiv = document.getElementById("explanation");
-const sceneContainer = document.getElementById("scene");
-const startButton = document.querySelector("button[onclick='start()']"); // Cache start button
+const DOM = {
+  firstStringInput: document.getElementById("first_string"),
+  secondStringInput: document.getElementById("second_string"),
+  currentDateDisplay: document.getElementById("current-date"),
+  firstStringDisplay: document.getElementById("first-string-display"),
+  secondStringDisplay: document.getElementById("second-string-display"),
+  explanationDiv: document.getElementById("explanation"),
+  sceneContainer: document.getElementById("scene"),
+  startButton: document.querySelector("button[onclick='start()']"), // Cache start button
+};
 
 let isStarted = false;
 let ix = [];
@@ -17,8 +19,8 @@ let isLCSshowed = false;
 
 // Helper function to initialize LCS variables
 function initializeLCS() {
-  m = firstStringInput.value.length;
-  n = secondStringInput.value.length;
+  m = DOM.firstStringInput.value.length;
+  n = DOM.secondStringInput.value.length;
   ix = Array(m + 1)
     .fill()
     .map(() => Array(n + 1).fill(0)); // Reset LCS matrix
@@ -38,21 +40,26 @@ function createStyledSpan(text, fontWeight = "bold", fontSize = "20px") {
 function start() {
   if (!isStarted) {
     // First time start
-    currentDateDisplay.innerText = new Date().toLocaleDateString();
-    startButton.innerText = "Restart"; // Change button to "Restart"
+    DOM.currentDateDisplay.innerText = new Date().toLocaleDateString();
+    DOM.startButton.innerText = "Restart"; // Change button to "Restart"
     isStarted = true;
   } else {
     // Reset for restart
-    firstStringDisplay.innerHTML = "";
-    secondStringDisplay.innerHTML = "";
-    explanationDiv.innerHTML = "";
-    sceneContainer.querySelector("table")?.remove(); // Remove existing table
+    DOM.firstStringDisplay.innerHTML = "";
+    DOM.secondStringDisplay.innerHTML = "";
+
+    DOM.explanationDiv.innerHTML = "";
+    DOM.sceneContainer.querySelector("table")?.remove(); // Remove existing table
     isStarted = false; // Reset `isStarted`
   }
 
   // Display the new input strings
-  firstStringDisplay.appendChild(createStyledSpan(firstStringInput.value));
-  secondStringDisplay.appendChild(createStyledSpan(secondStringInput.value));
+  DOM.firstStringDisplay.appendChild(
+    createStyledSpan(DOM.firstStringInput.value)
+  );
+  DOM.secondStringDisplay.appendChild(
+    createStyledSpan(DOM.secondStringInput.value)
+  );
 
   // Initialize LCS variables and display the empty table
   initializeLCS();
@@ -60,7 +67,7 @@ function start() {
 }
 
 function updateTable() {
-  const existingTable = sceneContainer.querySelector("table");
+  const existingTable = DOM.sceneContainer.querySelector("table");
   if (existingTable) existingTable.remove();
 
   const table = document.createElement("table");
@@ -77,7 +84,7 @@ function updateTable() {
   // Append characters of secondString as column headers, shifted to the right
   for (let j = 0; j < n; j++) {
     const headerCell = document.createElement("th");
-    headerCell.innerText = secondStringInput.value[j] || ""; // Fill with characters from secondString
+    headerCell.innerText = DOM.secondStringInput.value[j] || ""; // Fill with characters from secondString
 
     if (j >= g - 1) headerCell.style.color = "blue"; // Correct and functional
     headerRow.appendChild(headerCell);
@@ -90,7 +97,7 @@ function updateTable() {
 
     // Add row header for firstString characters
     const rowHeaderCell = document.createElement("th");
-    rowHeaderCell.innerText = i > 0 ? firstStringInput.value[i - 1] : ""; // Fill with characters from firstString
+    rowHeaderCell.innerText = i > 0 ? DOM.firstStringInput.value[i - 1] : ""; // Fill with characters from firstString
     if (i >= f) rowHeaderCell.style.color = "red";
     row.appendChild(rowHeaderCell);
 
@@ -104,7 +111,7 @@ function updateTable() {
     }
     table.appendChild(row);
   }
-  sceneContainer.appendChild(table);
+  DOM.sceneContainer.appendChild(table);
 }
 
 function highlightCharacters() {
@@ -118,9 +125,20 @@ function highlightCharacters() {
     }
   };
 
-  highlightString(firstStringDisplay, firstStringInput.value, f - 1, "red");
-  highlightString(secondStringDisplay, secondStringInput.value, g - 1, "blue");
+  highlightString(
+    DOM.firstStringDisplay,
+    DOM.firstStringInput.value,
+    f - 1,
+    "red"
+  );
+  highlightString(
+    DOM.secondStringDisplay,
+    DOM.secondStringInput.value,
+    g - 1,
+    "blue"
+  );
 }
+
 function highlightLCS() {
   let i = m,
     j = n;
@@ -129,7 +147,9 @@ function highlightLCS() {
 
   // Trace back through the LCS matrix to find matching indices
   while (i > 0 && j > 0) {
-    if (firstStringInput.value[i - 1] === secondStringInput.value[j - 1]) {
+    if (
+      DOM.firstStringInput.value[i - 1] === DOM.secondStringInput.value[j - 1]
+    ) {
       lcsIndicesFirst.push(i - 1);
       lcsIndicesSecond.push(j - 1);
       i--;
@@ -153,23 +173,24 @@ function highlightLCS() {
   };
 
   highlightString(
-    firstStringDisplay,
-    firstStringInput.value,
+    DOM.firstStringDisplay,
+    DOM.firstStringInput.value,
     lcsIndicesFirst,
     "green"
   );
   highlightString(
-    secondStringDisplay,
-    secondStringInput.value,
+    DOM.secondStringDisplay,
+    DOM.secondStringInput.value,
     lcsIndicesSecond,
     "green"
   );
 
   // Highlight corresponding LCS cells in the table
+
   for (let k = 0; k < lcsIndicesFirst.length; k++) {
     const row = lcsIndicesFirst[k] + 2; // Adjusted for 1-indexed rows
     const col = lcsIndicesSecond[k] + 2; // Adjusted for 1-indexed columns
-    const tableCell = sceneContainer.querySelector(
+    const tableCell = DOM.sceneContainer.querySelector(
       `table tr:nth-child(${row + 1}) td:nth-child(${col + 1})`
     );
     if (tableCell) {
@@ -179,12 +200,33 @@ function highlightLCS() {
     }
   }
 
+  // Highlight only the cells that contain LCS characters in the first row
+  const tabllo = DOM.sceneContainer.querySelector("table");
+  const firstRow = tabllo.rows[0]; // Assuming the first row (index 1) is the one you want to highlight (after header)
+  if (firstRow)
+    lcsIndicesSecond.forEach((index) => {
+      const cell = firstRow.cells[index + 2]; // Get the corresponding cell based on the LCS index
+      if (cell) {
+        cell.style.color = "green";
+        cell.style.fontWeight = "bold";
+        cell.style.backgroundColor = "pink";
+      }
+    });
+  // const firstCol = tabllo.col[0]; // Assuming the first row (index 1) is the one you want to highlight (after header)
+  // if (firstCol)
+  lcsIndicesFirst.forEach((index) => {
+    const cell = tabllo.rows[index + 2].cells[0]; // Access the first column (index 0)
+    if (cell) {
+      cell.style.color = "green"; // Change text color to green
+      cell.style.fontWeight = "bold"; // Make the text bold
+      cell.style.backgroundColor = "pink"; // Change background color to pink
+    }
+  });
   // Add explanations for each LCS letter at the end
-  explanationDiv.innerHTML = "<h3>Explanation of LCS Letters:</h3>"; // Clear and add header
+  DOM.explanationDiv.innerHTML = "<h3>Explanation of LCS Letters:</h3>"; // Clear and add header
   for (let k = lcsIndicesFirst.length - 1; k >= 0; k--) {
     const explanationText = document.createElement("p");
-    const firstStringChar = firstStringInput.value[lcsIndicesFirst[k]];
-    const secondStringChar = secondStringInput.value[lcsIndicesSecond[k]];
+    const firstStringChar = DOM.firstStringInput.value[lcsIndicesFirst[k]];
 
     explanationText.innerHTML = `Matched letter "<strong>${firstStringChar}</strong>" at position <strong>${
       lcsIndicesFirst[k] + 1
@@ -193,7 +235,7 @@ function highlightLCS() {
     }</strong> in <em>secondString</em>.`;
     explanationText.style.fontSize = "16px";
     explanationText.style.color = "#333";
-    explanationDiv.appendChild(explanationText);
+    DOM.explanationDiv.appendChild(explanationText);
   }
 
   // Detailed explanation of backtracking
@@ -216,7 +258,8 @@ function highlightLCS() {
 	`;
   backtrackingExplanation.style.fontSize = "14px";
   backtrackingExplanation.style.color = "#666";
-  explanationDiv.appendChild(backtrackingExplanation);
+  DOM.explanationDiv.appendChild(backtrackingExplanation);
+  highlightLCSCharacters();
 }
 
 document.addEventListener("keydown", (event) => {
@@ -228,9 +271,9 @@ document.addEventListener("keydown", (event) => {
 
 function moveStart() {
   start();
-  firstStringDisplay.innerHTML = "";
-  secondStringDisplay.innerHTML = "";
-  explanationDiv.innerHTML = "";
+  DOM.firstStringDisplay.innerHTML = "";
+  DOM.secondStringDisplay.innerHTML = "";
+  DOM.explanationDiv.innerHTML = "";
 }
 
 function moveEnd() {
@@ -238,7 +281,9 @@ function moveEnd() {
   if (!isStarted) start();
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
-      if (firstStringInput.value[i - 1] === secondStringInput.value[j - 1]) {
+      if (
+        DOM.firstStringInput.value[i - 1] === DOM.secondStringInput.value[j - 1]
+      ) {
         ix[i][j] = ix[i - 1][j - 1] + 1; // Increment if characters match
       } else {
         ix[i][j] = Math.max(ix[i - 1][j], ix[i][j - 1]); // Take the max from the left or above
@@ -261,7 +306,9 @@ function moveEnd() {
 
 function moveRight() {
   if (!isStarted) start();
-  if (firstStringInput.value[f - 1] === secondStringInput.value[g - 1]) {
+  if (
+    DOM.firstStringInput.value[f - 1] === DOM.secondStringInput.value[g - 1]
+  ) {
     ix[f][g] = ix[f - 1][g - 1] + 1;
   } else {
     ix[f][g] = Math.max(ix[f - 1][g], ix[f][g - 1]);
@@ -294,16 +341,87 @@ function moveLeft() {
 }
 
 function updateExplanation() {
-  const charFromFirst = firstStringInput.value[f - 1] || "";
-  const charFromSecond = secondStringInput.value[g - 1] || "";
+  const charFromFirst = DOM.firstStringInput.value[f - 1] || "";
+  const charFromSecond = DOM.secondStringInput.value[g - 1] || "";
 
   if (charFromFirst && charFromSecond) {
     if (charFromFirst === charFromSecond) {
-      explanationDiv.innerText = `Matched "${charFromFirst}" in both strings.`;
+      DOM.explanationDiv.innerText = `Matched "${charFromFirst}" in both strings.`;
     } else {
-      explanationDiv.innerText = `No match at "${charFromFirst}" and "${charFromSecond}".`;
+      DOM.explanationDiv.innerText = `No match at "${charFromFirst}" and "${charFromSecond}".`;
     }
   } else {
-    explanationDiv.innerText = "Reached the end of the strings.";
+    DOM.explanationDiv.innerText = "Reached the end of the strings.";
+  }
+}
+
+function highlightLCSCharacters() {
+  // Check if the length of the first string is greater than the second string
+  if (DOM.firstStringInput.value.length > DOM.secondStringInput.value.length) {
+    let i = m,
+      j = n;
+
+    // Initialize arrays to hold LCS indices
+    const lcsIndicesFirst = [];
+    const lcsIndicesSecond = [];
+
+    // Trace back through the LCS matrix to find matching indices
+    while (i > 0 && j > 0) {
+      if (
+        DOM.firstStringInput.value[i - 1] === DOM.secondStringInput.value[j - 1]
+      ) {
+        lcsIndicesFirst.push(i - 1);
+        lcsIndicesSecond.push(j - 1);
+        i--;
+        j--;
+      } else if (ix[i - 1][j] > ix[i][j - 1]) {
+        i--;
+      } else {
+        j--;
+      }
+    }
+    // Highlight matching characters in the input strings if any
+    if (lcsIndicesFirst.length > 0 && lcsIndicesSecond.length > 0) {
+      const highlightString = (displayElement, string, indices, color) => {
+        displayElement.innerHTML = "";
+        for (let k = 0; k < string.length; k++) {
+          const charSpan = document.createElement("span");
+          charSpan.innerText = string[k];
+          charSpan.style.color = indices.includes(k) ? color : "black"; // Highlight LCS character
+          displayElement.appendChild(charSpan);
+        }
+      };
+
+      highlightString(
+        DOM.firstStringDisplay,
+        DOM.firstStringInput.value,
+        lcsIndicesFirst,
+        "green"
+      );
+      highlightString(
+        DOM.secondStringDisplay,
+        DOM.secondStringInput.value,
+        lcsIndicesSecond,
+        "green"
+      );
+
+      // Explanation of LCS letters
+      DOM.explanationDiv.innerHTML = "<h3>Explanation of LCS Letters:</h3>"; // Clear and add header
+      for (let k = lcsIndicesFirst.length - 1; k >= 0; k--) {
+        const explanationText = document.createElement("p");
+        const firstStringChar = DOM.firstStringInput.value[lcsIndicesFirst[k]];
+
+        explanationText.innerHTML = `Matched letter "<strong>${firstStringChar}</strong>" at position <strong>${
+          lcsIndicesFirst[k] + 1
+        }</strong> in <em>firstString</em> and position <strong>${
+          lcsIndicesSecond[k] + 1
+        }</strong> in <em>secondString</em>.`;
+        explanationText.style.fontSize = "16px";
+        explanationText.style.color = "#333";
+        DOM.explanationDiv.appendChild(explanationText);
+      }
+    } else {
+      DOM.explanationDiv.innerHTML = "<h3>No common subsequence found!</h3>";
+    }
   }
 }
