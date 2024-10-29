@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LCS Visualizer</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="index.js" defer></script>
+  </head>
+  <body>
+    <div class="notebook">
+      <h1>Longest Common Subsequence (LCS) Visualizer</h1>
+      <div class="date" id="current-date"></div>
+      <div>
+        First string: <input type="text" id="first_string" /> Second string:
+        <input type="text" id="second_string" />
+        <button onclick="start()">Start</button>
+      </div>
+      <div class="display-string" id="display-strings">
+        <div id="first-string-display"></div>
+        <div id="second-string-display"></div>
+      </div>
+      <div id="scene">
+        <div id="table-container"></div>
+        <!-- Keep this line to contain the table -->
+        <div id="button-container">
+          <button id="left-arrow-button" onclick="moveLeft()">&#8592;</button>
+          <!-- Left arrow button -->
+          <button id="right-arrow-button" onclick="moveRight()">&#8594;</button>
+          <!-- Right arrow button -->
+        </div>
+      </div>
+      <div id="explanation" style="margin-top: 20px"></div>
+      <footer>&copy; Kharraz Adam 2024 LCS Visualizer</footer>
+    </div>
+  </body>
+</html>
