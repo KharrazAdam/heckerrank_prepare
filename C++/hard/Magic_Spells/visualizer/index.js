@@ -201,11 +201,15 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") moveRight();
   else if (event.key === "ArrowLeft") moveLeft();
   else if (event.key === "ArrowDown") moveEnd();
-  else if (event.key === "ArrowUp")
-    () => {
-      start();
-    };
+  else if (event.key === "ArrowUp") moveStart();
 });
+
+function moveStart() {
+  start();
+  firstStringDisplay.innerHTML = "";
+  secondStringDisplay.innerHTML = "";
+  explanationDiv.innerHTML = "";
+}
 
 function moveEnd() {
   // Populate the LCS matrix before moving to the end

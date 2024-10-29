@@ -63,10 +63,11 @@ td {
   color: #333;
 }
 
+td:hover,
 .updated-cell {
-  background-color: #ff4c4c; /* Red background for updated cell */
-  color: #fff; /* White text for contrast */
-  font-weight: bold; /* Emphasize the updated cell */
+  background-color: #ff4c4c;
+  color: #d3d3d3;
+  font-weight: bold;
 }
 
 footer {
