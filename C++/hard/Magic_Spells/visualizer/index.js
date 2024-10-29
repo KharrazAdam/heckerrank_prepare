@@ -78,7 +78,8 @@ function updateTable() {
   for (let j = 0; j < n; j++) {
     const headerCell = document.createElement("th");
     headerCell.innerText = secondStringInput.value[j] || ""; // Fill with characters from secondString
-    if (j >= g - 2) headerCell.style.color = "blue";
+
+    if (j >= g - 1) headerCell.style.color = "blue"; // Correct and functional
     headerRow.appendChild(headerCell);
   }
   table.appendChild(headerRow);
@@ -120,7 +121,6 @@ function highlightCharacters() {
   highlightString(firstStringDisplay, firstStringInput.value, f - 1, "red");
   highlightString(secondStringDisplay, secondStringInput.value, g - 1, "blue");
 }
-
 function highlightLCS() {
   let i = m,
     j = n;
@@ -195,6 +195,28 @@ function highlightLCS() {
     explanationText.style.color = "#333";
     explanationDiv.appendChild(explanationText);
   }
+
+  // Detailed explanation of backtracking
+  const backtrackingExplanation = document.createElement("p");
+  backtrackingExplanation.innerHTML = `
+	  <strong>Backtracking Explanation:</strong><br>
+	  <p style="text-align: center">The backtracking process begins after the LCS matrix (ix) has been fully populated. 
+	  Each cell in the matrix represents the length of the LCS up to that point in the respective strings. 
+	  We start from the bottom-right corner of the matrix (length of the first string (m) = ${m}, length of the second string (n) = ${n}) and iterate back through the matrix:</p>
+	  <ul>
+		<li>When characters match (firstString[i-1] === secondString[j-1]), they are part of the LCS. We store these indices and move diagonally up-left (i--, j--).</li>
+		<li>If the characters do not match, we check the values in the matrix: 
+			<ul>
+			  <li>If the value above (matrix[i-1][j]) is greater, we move up (i--).</li>
+			  <li>Otherwise, we move left (j--).</li>
+			</ul>
+		</li>
+		<li>This process continues until we reach either the first row or the first column, indicating we've traversed one of the strings completely.</li>
+	  </ul>
+	`;
+  backtrackingExplanation.style.fontSize = "14px";
+  backtrackingExplanation.style.color = "#666";
+  explanationDiv.appendChild(backtrackingExplanation);
 }
 
 document.addEventListener("keydown", (event) => {
@@ -238,6 +260,7 @@ function moveEnd() {
 }
 
 function moveRight() {
+  if (!isStarted) start();
   if (firstStringInput.value[f - 1] === secondStringInput.value[g - 1]) {
     ix[f][g] = ix[f - 1][g - 1] + 1;
   } else {
@@ -248,12 +271,12 @@ function moveRight() {
   updateExplanation();
   highlightCharacters();
 
+  updateTable();
   g++;
   if (g > n) {
     g = 1;
     f++;
   }
-  updateTable();
   if (f > m) highlightLCS();
 }
 
