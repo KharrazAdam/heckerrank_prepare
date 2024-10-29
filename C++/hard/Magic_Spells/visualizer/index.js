@@ -213,6 +213,7 @@ function moveStart() {
 
 function moveEnd() {
   // Populate the LCS matrix before moving to the end
+  if (!isStarted) start();
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
       if (firstStringInput.value[i - 1] === secondStringInput.value[j - 1]) {
