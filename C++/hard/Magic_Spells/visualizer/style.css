@@ -55,12 +55,18 @@ td {
 }
 
 th {
-  background-color: #d42c2c; /* Header background */
-  color: #fff; /* White text for contrast */
+  background-color: #f5f0e6; /* Header background */
+  color: #333; /* White text for contrast */
 }
 
 td {
   color: #333;
+}
+
+.updated-cell {
+  background-color: #ff4c4c; /* Red background for updated cell */
+  color: #fff; /* White text for contrast */
+  font-weight: bold; /* Emphasize the updated cell */
 }
 
 footer {
@@ -108,10 +114,4 @@ footer img {
 #right-arrow-button:hover {
   background-color: #e63939; /* Darker red on hover */
   transform: scale(1.1); /* Slightly enlarge on hover */
-}
-
-.updated-cell {
-  background-color: #ff4c4c; /* Red background for updated cell */
-  color: #fff; /* White text for contrast */
-  font-weight: bold; /* Emphasize the updated cell */
 }

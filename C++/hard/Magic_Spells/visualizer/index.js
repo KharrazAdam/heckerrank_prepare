@@ -12,6 +12,8 @@ let isStarted = false;
 let ix = [];
 let m, n, f, g;
 let lastUpdatedCell = { row: null, col: null };
+let LCS = "";
+let isLCSshowed = false;
 
 // Helper function to initialize LCS variables
 function initializeLCS() {
@@ -45,6 +47,7 @@ function start() {
     secondStringDisplay.innerHTML = "";
     explanationDiv.innerHTML = "";
     sceneContainer.querySelector("table")?.remove(); // Remove existing table
+    isStarted = false; // Reset `isStarted`
   }
 
   // Display the new input strings
@@ -62,8 +65,34 @@ function updateTable() {
 
   const table = document.createElement("table");
 
+  // Create the header row with an extra empty cell for alignment
+  const headerRow = document.createElement("tr");
+  const emptyCell = document.createElement("th"); // Top-left corner cell, empty
+  headerRow.appendChild(emptyCell);
+
+  // Add another empty cell to shift secondString characters to the right by one
+  const extraEmptyCell = document.createElement("th");
+  headerRow.appendChild(extraEmptyCell);
+
+  // Append characters of secondString as column headers, shifted to the right
+  for (let j = 0; j < n; j++) {
+    const headerCell = document.createElement("th");
+    headerCell.innerText = secondStringInput.value[j] || ""; // Fill with characters from secondString
+    if (j >= g - 2) headerCell.style.color = "blue";
+    headerRow.appendChild(headerCell);
+  }
+  table.appendChild(headerRow);
+
+  // Populate rows with characters of firstString and the LCS matrix values
   for (let i = 0; i <= m; i++) {
     const row = document.createElement("tr");
+
+    // Add row header for firstString characters
+    const rowHeaderCell = document.createElement("th");
+    rowHeaderCell.innerText = i > 0 ? firstStringInput.value[i - 1] : ""; // Fill with characters from firstString
+    if (i >= f) rowHeaderCell.style.color = "red";
+    row.appendChild(rowHeaderCell);
+
     for (let j = 0; j <= n; j++) {
       const cell = document.createElement("td");
       cell.innerText = `${ix[i][j]}`; // Use the ix array to fill the table
@@ -92,6 +121,87 @@ function highlightCharacters() {
   highlightString(secondStringDisplay, secondStringInput.value, g - 1, "blue");
 }
 
+function highlightLCS() {
+  let i = m,
+    j = n;
+  const lcsIndicesFirst = [];
+  const lcsIndicesSecond = [];
+
+  // Trace back through the LCS matrix to find matching indices
+  while (i > 0 && j > 0) {
+    if (firstStringInput.value[i - 1] === secondStringInput.value[j - 1]) {
+      lcsIndicesFirst.push(i - 1);
+      lcsIndicesSecond.push(j - 1);
+      i--;
+      j--;
+    } else if (ix[i - 1][j] > ix[i][j - 1]) {
+      i--;
+    } else {
+      j--;
+    }
+  }
+
+  // Highlight matching characters in the input strings
+  const highlightString = (displayElement, string, indices, color) => {
+    displayElement.innerHTML = "";
+    for (let k = 0; k < string.length; k++) {
+      const charSpan = document.createElement("span");
+      charSpan.innerText = string[k];
+      if (indices.includes(k)) charSpan.style.color = color; // Highlight LCS character
+      displayElement.appendChild(charSpan);
+    }
+  };
+
+  highlightString(
+    firstStringDisplay,
+    firstStringInput.value,
+    lcsIndicesFirst,
+    "green"
+  );
+  highlightString(
+    secondStringDisplay,
+    secondStringInput.value,
+    lcsIndicesSecond,
+    "green"
+  );
+
+  // Highlight corresponding LCS cells in the table
+  for (let k = 0; k < lcsIndicesFirst.length; k++) {
+    const row = lcsIndicesFirst[k] + 2; // Adjusted for 1-indexed rows
+    const col = lcsIndicesSecond[k] + 2; // Adjusted for 1-indexed columns
+    const tableCell = sceneContainer.querySelector(
+      `table tr:nth-child(${row + 1}) td:nth-child(${col + 1})`
+    );
+    if (tableCell) {
+      tableCell.style.backgroundColor = "green";
+      tableCell.style.color = "white";
+      tableCell.style.fontWeight = "white";
+    }
+  }
+
+  // Add explanations for each LCS letter at the end
+  explanationDiv.innerHTML = "<h3>Explanation of LCS Letters:</h3>"; // Clear and add header
+  for (let k = lcsIndicesFirst.length - 1; k >= 0; k--) {
+    const explanationText = document.createElement("p");
+    const firstStringChar = firstStringInput.value[lcsIndicesFirst[k]];
+    const secondStringChar = secondStringInput.value[lcsIndicesSecond[k]];
+
+    explanationText.innerHTML = `Matched letter "<strong>${firstStringChar}</strong>" at position <strong>${
+      lcsIndicesFirst[k] + 1
+    }</strong> in <em>firstString</em> and position <strong>${
+      lcsIndicesSecond[k] + 1
+    }</strong> in <em>secondString</em>.`;
+    explanationText.style.fontSize = "16px";
+    explanationText.style.color = "#333";
+    explanationDiv.appendChild(explanationText);
+  }
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowRight") moveRight();
+  else if (event.key === "ArrowLeft") moveLeft();
+});
+
 function moveRight() {
   if (firstStringInput.value[f - 1] === secondStringInput.value[g - 1]) {
     ix[f][g] = ix[f - 1][g - 1] + 1;
@@ -109,6 +219,7 @@ function moveRight() {
     f++;
   }
   updateTable();
+  if (f > m) highlightLCS();
 }
 
 function moveLeft() {
@@ -127,16 +238,14 @@ function moveLeft() {
 function updateExplanation() {
   const charFromFirst = firstStringInput.value[f - 1] || "";
   const charFromSecond = secondStringInput.value[g - 1] || "";
-  explanationDiv.innerHTML = ""; // Clear previous explanation
 
-  const explanationText = document.createElement("p");
-  explanationText.style.fontSize = "18px";
-  explanationText.style.color = "#333";
-
-  explanationText.innerHTML =
-    charFromFirst === charFromSecond
-      ? `Characters match: "<strong>${charFromFirst}</strong>" from <em>firstString</em> and "<strong>${charFromSecond}</strong>" from <em>secondString</em>. This increases LCS by 1. Current LCS value at (${f}, ${g}) is <strong>${ix[f][g]}</strong>.`
-      : `Characters do not match: "<strong>${charFromFirst}</strong>" from <em>firstString</em> and "<strong>${charFromSecond}</strong>" from <em>secondString</em>. The LCS value remains the maximum of the previous values, which is <strong>${ix[f][g]}</strong> at (${f}, ${g}).`;
-
-  explanationDiv.appendChild(explanationText);
+  if (charFromFirst && charFromSecond) {
+    if (charFromFirst === charFromSecond) {
+      explanationDiv.innerText = `Matched "${charFromFirst}" in both strings.`;
+    } else {
+      explanationDiv.innerText = `No match at "${charFromFirst}" and "${charFromSecond}".`;
+    }
+  } else {
+    explanationDiv.innerText = "Reached the end of the strings.";
+  }
 }
