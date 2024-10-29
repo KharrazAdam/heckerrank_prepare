@@ -200,7 +200,37 @@ function highlightLCS() {
 document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") moveRight();
   else if (event.key === "ArrowLeft") moveLeft();
+  else if (event.key === "ArrowDown") moveEnd();
+  else if (event.key === "ArrowUp")
+    () => {
+      start();
+    };
 });
+
+function moveEnd() {
+  // Populate the LCS matrix before moving to the end
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (firstStringInput.value[i - 1] === secondStringInput.value[j - 1]) {
+        ix[i][j] = ix[i - 1][j - 1] + 1; // Increment if characters match
+      } else {
+        ix[i][j] = Math.max(ix[i - 1][j], ix[i][j - 1]); // Take the max from the left or above
+      }
+    }
+  }
+
+  // Set f and g to the length of their respective strings
+  f = m; // Set f to the length of the first string
+  g = n; // Set g to the length of the second string
+
+  lastUpdatedCell = { row: f, col: g }; // Set last updated cell to the end
+  updateExplanation();
+  highlightCharacters();
+  updateTable();
+
+  // Highlight the LCS after reaching the end
+  if (f > 0 && g > 0) highlightLCS();
+}
 
 function moveRight() {
   if (firstStringInput.value[f - 1] === secondStringInput.value[g - 1]) {
