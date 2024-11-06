@@ -12,9 +12,10 @@ int main() {
     int level = 0;
 
     std::vector<Tag> root;
-    for (int i = 0; i < N; i++)
+    int i = 0;
+    for (; i < N; i++)
         std::cin.getline(input[i], 200);
-        int i = 0;
+    i = 0;
     parse(root, i, input, N);
 
     root[0].children.front().print_tag();
