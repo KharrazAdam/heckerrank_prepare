@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <sstream>
+#include <string.h>
+
 class Tag
 {
     private:
@@ -8,37 +11,30 @@ class Tag
         std::string id;
         std::string parent; 
 
-        std::string value;
-        std::string name;
         std::map<std::string, std::string> attr;
     public:
         Tag(){};
-        Tag(std::string i, std::string par_,int d ): id(i), parent(par_), data(d), value("Not Found!"), name("Not Found!"){};
+        Tag(std::string i, std::string par_,int d ): id(i), parent(par_), data(d){};
         ~Tag(){};
 
         std::string get_parent() const {
             return this->parent;
         }
 
-        std::string get_value() const {
-            return this->value;
+        std::string get_attr(std::string k){
+            const auto& a = this->attr[k];
+            if (a == "")
+                return "Not Found!";
+            else
+                return a;
         }
-
-        std::string get_name() const {
-            return this->name;
-        }
-        // -----------------------------------------------------------------------
 
         void set_parent(std::string str) {
             this->parent = str;
         }
 
-        void set_value(std::string str) {
-            this->value = str;
-        }
-
-        void set_name(std::string str) {
-            this->name = str;
+        void set_att(std::string k, std::string v) {
+            attr[k] = v;
         }
 };
 
@@ -52,14 +48,21 @@ std::string get_id(std::string str) {
     return str.substr(1, pos1 <= pos2 ? pos1 : pos2);
 }
 
-#include <sstream>
-#include <string.h>
-std::string vn(const char *vm, std::stringstream &ss) {
+std::string vn(std::stringstream &ss) {
     std::string word;
     ss >> word;
-    ss >> word;    
+    ss >> word;
     return word.substr(1, word.rfind('\"') - 1);
 }
+
+void    att(Tag& t, std::string &word) {
+    std::string key, value;
+    key = word.substr(0, word.find('='));
+    int a = word.find('\"');
+    value = word.substr(a + 1, word.rfind('\"') - a - 1);
+    t.set_att(key, value);
+}
+
 void    parse(Tag& t, const char *input) {
     
     std::stringstream ss(input);
@@ -68,16 +71,33 @@ void    parse(Tag& t, const char *input) {
     ss >> word;
     while (ss >> word)
     {
-        // std::cout << word << std::endl;
-        if (word == "value")
-            t.set_value(vn("value", ss));
-        else if (word == "name")
-            t.set_name(vn("name", ss));
-            // do name
-        else if (word != "") ;
-            // do attribute
-        // break;
+        if (word.find('=') == std::string::npos)
+            t.set_att(word, vn(ss));        
+        else if (word != "") {
+            att(t, word);
+        }
+    };
+}
+
+std::pair<std::string, std::string> Q_att(std::string str) {
+    int pos = str.find('~');  // Find the position of '~'
+    if (pos == std::string::npos) return {"", ""};  // If '~' not found, exit
+
+    std::string lastTag;
+    int start = 0;
+
+    while (true) {
+        int nextDot = str.find('.', start);
+        if (nextDot == std::string::npos || nextDot > pos) break;
+
+        start = nextDot + 1;  // Move to the next tag after '.'
     }
+
+    // Get the last tag from start to position of '~'
+    lastTag = str.substr(start, pos - start);
+    std::string att = str.substr(pos + 1);
+
+    return {lastTag, att};
 }
 
 int main(void) {
@@ -102,8 +122,14 @@ int main(void) {
             parent = m[parent].get_parent();
     }
 
-    for (auto &x: m) {
-        std::cout << "me " << x.first << " -> my parent is: " << x.second.get_parent() << " my value is: " << x.second.get_value() << " my name is: "<< x.second.get_name() <<  std::endl;
+    while (Q--) {
+        std::cin.getline(input[0], 200);
+        if (!input[0][0]) continue;
+
+        std::pair<std::string, std::string> pair;
+
+        pair = Q_att(std::string(input[0]));
+        std::cout << m[pair.first].get_attr(pair.second) << std::endl;
     }
     return 0;
 }
